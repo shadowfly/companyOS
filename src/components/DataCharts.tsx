@@ -48,15 +48,15 @@ function BarChart({ data, title }: { data: BarData[]; title: string }) {
                   ? `${(bar.value / 1000).toFixed(1)}k`
                   : bar.value}
               </div>
-              <div
-                className="w-full rounded-t-md"
-                style={{
-                  height: `${heightPx}px`,
-                  background: bar.color,
-                  transition: `height 1.2s cubic-bezier(0.4,0,0.2,1) ${i * 0.12}s`,
-                   boxShadow: animated ? (bar.color && typeof bar.color === 'string' ? `0 0 12px ${bar.color.includes("cyan") ? "rgba(0,212,255,0.4)" : "rgba(124,58,237,0.4)"}` : "none") : "none",
-                }}
-              />
+            <div
+              className="w-full rounded-t-md"
+              style={{
+                height: `${heightPx}px`,
+                background: bar.color,
+                transition: `height 1.2s cubic-bezier(0.4,0,0.2,1) ${i * 0.12}s`,
+                boxShadow: animated && bar.color && typeof bar.color === 'string' ? `0 0 12px ${bar.color.includes("cyan") ? "rgba(0,212,255,0.4)" : "rgba(124,58,237,0.4)"}` : "none",
+              }}
+            />
               <div className="text-[10px] text-slate-500 font-mono">{bar.label}</div>
             </div>
           );
