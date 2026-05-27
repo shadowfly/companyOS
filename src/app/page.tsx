@@ -172,9 +172,9 @@ function HeroSection() {
           {/* Left: Content */}
           <div>
             <div className="inline-flex items-center gap-2 tag-tech mb-6">
-              <span className="ai-dot" />
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#00d4ff] animate-pulse" />
               {t("hero.badge")}
-              <span className="ai-dot" />
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#00d4ff] animate-pulse" />
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black leading-[1.05] mb-6">
@@ -307,7 +307,7 @@ function CompaniesSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 tag-tech mb-4">
-            <span className="ai-dot" />
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#00d4ff] animate-pulse" />
             {t("companies.badge")}
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-4">
@@ -330,7 +330,7 @@ function CompaniesSection() {
               </div>
               <div className="text-xs text-slate-400">{t(c.descKey)}</div>
               <div className="mt-3 flex items-center gap-1 text-cyan-400 text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
-                <span className="ai-dot w-1.5 h-1.5" />
+                <span className="inline-block w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#00d4ff] animate-pulse" />
                 One Click →
               </div>
             </div>
@@ -338,6 +338,88 @@ function CompaniesSection() {
         </div>
       </div>
     </section>
+  );
+}
+
+// ─── Feature Card with animated progress bars ─────────────────────────────────
+function FeatureCard({
+  feat,
+  colorMap,
+  t,
+}: {
+  feat: {
+    icon: string;
+    titleKey: string;
+    descKey: string;
+    tags: string[];
+    color: string;
+    metrics: { label: string; pct: number }[];
+  };
+  colorMap: Record<string, { bar: string; barHex: string; text: string; bg: string }>;
+  t: (k: string) => string;
+}) {
+  const [animated, setAnimated] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const c = colorMap[feat.color];
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => setAnimated(true), 100);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.2 }
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div ref={ref} className="card-tech p-6 sm:p-8">
+      <div className={`w-14 h-14 ${c.bg} rounded-2xl flex items-center justify-center text-2xl mb-5`}>
+        {feat.icon}
+      </div>
+      <h3 className={`text-xl font-bold ${c.text} mb-3`}>
+        {t(feat.titleKey)}
+      </h3>
+      <p className="text-slate-400 text-sm leading-relaxed mb-5">
+        {t(feat.descKey)}
+      </p>
+
+      {/* Progress bars — animated on scroll into view */}
+      <div className="space-y-3 mb-5">
+        {feat.metrics.map((m, j) => (
+          <div key={j}>
+            <div className="flex justify-between mb-1">
+              <span className="text-xs text-slate-500 font-mono">{m.label}</span>
+              <span className={`text-xs font-mono ${c.text}`}>{m.pct}%</span>
+            </div>
+            <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+              <div
+                className="h-full rounded-full"
+                style={{
+                  width: animated ? `${m.pct}%` : "0%",
+                  background: `linear-gradient(90deg, ${c.barHex}, ${c.barHex}aa)`,
+                  transition: `width 1.2s cubic-bezier(0.4,0,0.2,1) ${j * 0.15}s`,
+                  boxShadow: animated ? `0 0 8px ${c.barHex}66` : "none",
+                }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Tags */}
+      <div className="flex flex-wrap gap-2">
+        {feat.tags.map((tagKey) => (
+          <span key={tagKey} className="tag-tech text-xs">
+            {t(tagKey)}
+          </span>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -396,11 +478,11 @@ function FeaturesSection() {
     },
   ];
 
-  const colorMap: Record<string, { bar: string; text: string; bg: string }> = {
-    cyan: { bar: "bg-cyan-400", text: "text-cyan-400", bg: "bg-cyan-400/10" },
-    violet: { bar: "bg-violet-400", text: "text-violet-400", bg: "bg-violet-400/10" },
-    emerald: { bar: "bg-emerald-400", text: "text-emerald-400", bg: "bg-emerald-400/10" },
-    amber: { bar: "bg-amber-400", text: "text-amber-400", bg: "bg-amber-400/10" },
+  const colorMap: Record<string, { bar: string; barHex: string; text: string; bg: string }> = {
+    cyan:    { bar: "bg-cyan-400",    barHex: "#22d3ee", text: "text-cyan-400",    bg: "bg-cyan-400/10" },
+    violet:  { bar: "bg-violet-400",  barHex: "#a78bfa", text: "text-violet-400",  bg: "bg-violet-400/10" },
+    emerald: { bar: "bg-emerald-400", barHex: "#34d399", text: "text-emerald-400", bg: "bg-emerald-400/10" },
+    amber:   { bar: "bg-amber-400",   barHex: "#fbbf24", text: "text-amber-400",   bg: "bg-amber-400/10" },
   };
 
   return (
@@ -409,7 +491,7 @@ function FeaturesSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 tag-tech mb-4">
-            <span className="ai-dot" />
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#00d4ff] animate-pulse" />
             {t("features.badge")}
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-4">
@@ -419,46 +501,9 @@ function FeaturesSection() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          {features.map((feat, i) => {
-            const c = colorMap[feat.color];
-            return (
-              <div key={i} className="card-tech p-6 sm:p-8">
-                <div className={`w-14 h-14 ${c.bg} rounded-2xl flex items-center justify-center text-2xl mb-5`}>
-                  {feat.icon}
-                </div>
-                <h3 className={`text-xl font-bold ${c.text} mb-3`}>
-                  {t(feat.titleKey)}
-                </h3>
-                <p className="text-slate-400 text-sm leading-relaxed mb-5">
-                  {t(feat.descKey)}
-                </p>
-
-                {/* Progress bars */}
-                <div className="space-y-3 mb-5">
-                  {feat.metrics.map((m, j) => (
-                    <div key={j}>
-                      <div className="flex justify-between mb-1">
-                        <span className="text-xs text-slate-500 font-mono">{m.label}</span>
-                        <span className={`text-xs font-mono ${c.text}`}>{m.pct}%</span>
-                      </div>
-                      <div className="progress-bar">
-                        <div className={`progress-fill ${c.bar}`} style={{ width: `${m.pct}%` }} />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Tags */}
-                <div className="flex flex-wrap gap-2">
-                  {feat.tags.map((tagKey) => (
-                    <span key={tagKey} className="tag-tech text-xs">
-                      {t(tagKey)}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
+          {features.map((feat, i) => (
+            <FeatureCard key={i} feat={feat} colorMap={colorMap} t={t} />
+          ))}
         </div>
       </div>
     </section>
@@ -501,7 +546,7 @@ function RevenueSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 tag-tech mb-4">
-            <span className="ai-dot" />
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#00d4ff] animate-pulse" />
             {t("revenue.badge")}
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-4">
@@ -563,7 +608,7 @@ function WorkforceSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 tag-tech mb-4">
-            <span className="ai-dot" />
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#00d4ff] animate-pulse" />
             {t("workforce.badge")}
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-4">
@@ -590,9 +635,8 @@ function WorkforceSection() {
             {roles.map((role, i) => {
               const angle = (i / roles.length) * 360 - 90;
               const rad = (angle * Math.PI) / 180;
-              const r = 100;
-              const x = 50 + Math.cos(rad) * 40;
-              const y = 50 + Math.sin(rad) * 40;
+              const x = 50 + Math.cos(rad) * 42;
+              const y = 50 + Math.sin(rad) * 42;
               return (
                 <div
                   key={i}
@@ -617,7 +661,7 @@ function WorkforceSection() {
               <div className={`text-xl font-black ${role.color} mb-1`}>{role.count}</div>
               <div className="text-sm font-medium text-white mb-1">{t(role.key)}</div>
               <div className="flex justify-center">
-                <div className="ai-dot" />
+                <span className="inline-block w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#00d4ff] animate-pulse" />
               </div>
             </div>
           ))}
@@ -643,7 +687,7 @@ function PricingSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 tag-tech mb-4">
-            <span className="ai-dot" />
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#00d4ff] animate-pulse" />
             {t("pricing.badge")}
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-4">
@@ -750,9 +794,9 @@ function CTASection() {
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
         <div className="inline-flex items-center gap-2 tag-tech mb-6">
-          <span className="ai-dot" />
+          <span className="inline-block w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#00d4ff] animate-pulse" />
           Now
-          <span className="ai-dot" />
+          <span className="inline-block w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#00d4ff] animate-pulse" />
         </div>
         <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-4">
           {t("cta.title1")}
@@ -854,7 +898,7 @@ function Footer() {
             © 2025 AI Company OS. {t("footer.rights")}.
           </div>
           <div className="flex items-center gap-2 text-slate-600 text-xs font-mono">
-            <span className="ai-dot w-1.5 h-1.5" />
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#00d4ff] animate-pulse" />
             Powered by AI
           </div>
         </div>

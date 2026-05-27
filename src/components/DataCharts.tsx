@@ -13,16 +13,18 @@ interface BarData {
 function BarChart({ data, title }: { data: BarData[]; title: string }) {
   const [animated, setAnimated] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const MAX_HEIGHT = 120; // px
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setAnimated(true);
+          // Small delay so transition is visible
+          setTimeout(() => setAnimated(true), 100);
           observer.disconnect();
         }
       },
-      { threshold: 0.3 }
+      { threshold: 0.2 }
     );
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
@@ -31,29 +33,30 @@ function BarChart({ data, title }: { data: BarData[]; title: string }) {
   return (
     <div ref={ref} className="card-tech p-6">
       <div className="text-sm font-semibold text-slate-400 mb-6 font-mono">{title}</div>
-      <div className="flex items-end gap-3 h-36">
+      <div className="flex items-end gap-2 sm:gap-3" style={{ height: `${MAX_HEIGHT + 40}px` }}>
         {data.map((bar, i) => {
-          const pct = animated ? (bar.value / bar.maxValue) * 100 : 0;
+          const heightPx = animated ? Math.max(4, (bar.value / bar.maxValue) * MAX_HEIGHT) : 4;
           return (
             <div key={i} className="flex-1 flex flex-col items-center gap-2">
-              <div className="text-xs text-slate-500 font-mono whitespace-nowrap">
+              <div
+                className="text-[10px] text-slate-500 font-mono whitespace-nowrap transition-opacity duration-500"
+                style={{ opacity: animated ? 1 : 0 }}
+              >
                 {bar.value >= 10000
                   ? `${(bar.value / 1000).toFixed(0)}k`
                   : bar.value >= 1000
                   ? `${(bar.value / 1000).toFixed(1)}k`
                   : bar.value}
               </div>
-              <div className="w-full flex-1 flex items-end">
-                <div
-                  className="w-full rounded-t-sm"
-                  style={{
-                    height: `${pct}%`,
-                    minHeight: animated ? "4px" : "0",
-                    background: bar.color,
-                    transition: `height 1.2s cubic-bezier(0.4,0,0.2,1) ${i * 0.1}s`,
-                  }}
-                />
-              </div>
+              <div
+                className="w-full rounded-t-md"
+                style={{
+                  height: `${heightPx}px`,
+                  background: bar.color,
+                  transition: `height 1.2s cubic-bezier(0.4,0,0.2,1) ${i * 0.12}s`,
+                  boxShadow: animated ? `0 0 12px ${bar.color.includes("cyan") ? "rgba(0,212,255,0.4)" : "rgba(124,58,237,0.4)"}` : "none",
+                }}
+              />
               <div className="text-[10px] text-slate-500 font-mono">{bar.label}</div>
             </div>
           );
@@ -77,8 +80,8 @@ function DonutChart({ data, title, centerValue, centerLabel }: {
 }) {
   const [animated, setAnimated] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const size = 140;
-  const strokeWidth = 14;
+  const size = 150;
+  const strokeWidth = 16;
   const r = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * r;
 
@@ -86,11 +89,11 @@ function DonutChart({ data, title, centerValue, centerLabel }: {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setAnimated(true);
+          setTimeout(() => setAnimated(true), 150);
           observer.disconnect();
         }
       },
-      { threshold: 0.3 }
+      { threshold: 0.2 }
     );
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
@@ -98,7 +101,7 @@ function DonutChart({ data, title, centerValue, centerLabel }: {
 
   const total = data.reduce((s, d) => s + d.value, 0);
 
-  // Pre-compute offsets to avoid mutating during render
+  // Pre-compute offsets — no mutation during render
   const segmentOffsets = data.reduce<number[]>((acc, d, i) => {
     const prev = i === 0 ? 0 : acc[i - 1] + (data[i - 1].value / total) * circumference;
     return [...acc, prev];
@@ -108,8 +111,9 @@ function DonutChart({ data, title, centerValue, centerLabel }: {
     <div ref={ref} className="card-tech p-6">
       <div className="text-sm font-semibold text-slate-400 mb-4 font-mono">{title}</div>
       <div className="flex flex-col sm:flex-row items-center gap-6">
-        <div className="relative" style={{ width: size, height: size }}>
-          <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+        <div className="relative flex-shrink-0" style={{ width: size, height: size }}>
+          <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ transform: "rotate(-90deg)" }}>
+            {/* Track */}
             <circle
               cx={size / 2}
               cy={size / 2}
@@ -121,8 +125,8 @@ function DonutChart({ data, title, centerValue, centerLabel }: {
             {data.map((d, i) => {
               const pct = d.value / total;
               const dash = animated ? pct * circumference : 0;
-              const gap = circumference - dash;
-              const thisOffset = segmentOffsets[i];
+              const gap = circumference;
+              const dashOffset = -segmentOffsets[i];
               return (
                 <circle
                   key={i}
@@ -131,28 +135,35 @@ function DonutChart({ data, title, centerValue, centerLabel }: {
                   r={r}
                   fill="none"
                   stroke={d.color}
-                  strokeWidth={strokeWidth}
+                  strokeWidth={strokeWidth - 2}
                   strokeDasharray={`${dash} ${gap}`}
-                  strokeDashoffset={-thisOffset + circumference / 4}
-                  strokeLinecap="round"
-                  style={{ transition: `stroke-dasharray 1.5s cubic-bezier(0.4,0,0.2,1) ${i * 0.2}s` }}
+                  strokeDashoffset={dashOffset}
+                  strokeLinecap="butt"
+                  style={{
+                    transition: `stroke-dasharray 1.4s cubic-bezier(0.4,0,0.2,1) ${i * 0.15}s`,
+                  }}
                 />
               );
             })}
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <div className="text-xl font-black gradient-text-cyan">{centerValue}</div>
-            <div className="text-[10px] text-slate-500 font-mono">{centerLabel}</div>
+            <div className="text-2xl font-black" style={{ background: "linear-gradient(135deg, #00d4ff, #38bdf8)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+              {centerValue}
+            </div>
+            <div className="text-[10px] text-slate-500 font-mono mt-0.5">{centerLabel}</div>
           </div>
         </div>
-        <div className="space-y-3 flex-1">
+        <div className="space-y-2.5 flex-1 w-full">
           {data.map((d, i) => (
             <div key={i} className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: d.color }} />
-                <span className="text-xs text-slate-400">{d.label}</span>
+              <div className="flex items-center gap-2 min-w-0">
+                <div
+                  className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                  style={{ background: d.color, boxShadow: `0 0 6px ${d.color}` }}
+                />
+                <span className="text-xs text-slate-400 truncate">{d.label}</span>
               </div>
-              <span className="text-xs font-mono text-slate-300">{d.value}%</span>
+              <span className="text-xs font-mono text-slate-300 flex-shrink-0">{d.value}%</span>
             </div>
           ))}
         </div>
@@ -167,21 +178,22 @@ interface LinePoint {
 }
 
 function LineChart({ data, title, color }: { data: LinePoint[]; title: string; color: string }) {
-  const [animated, setAnimated] = useState(false);
+  const [progress, setProgress] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
-  const w = 280;
-  const h = 100;
-  const pad = 10;
+  const w = 600;
+  const h = 120;
+  const padX = 8;
+  const padY = 12;
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setAnimated(true);
+          setTimeout(() => setProgress(1), 100);
           observer.disconnect();
         }
       },
-      { threshold: 0.3 }
+      { threshold: 0.2 }
     );
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
@@ -191,66 +203,83 @@ function LineChart({ data, title, color }: { data: LinePoint[]; title: string; c
   const minVal = Math.min(...data.map((d) => d.value));
   const range = maxVal - minVal || 1;
 
-  const points = data.map((d, i) => ({
-    x: pad + (i / (data.length - 1)) * (w - 2 * pad),
-    y: h - pad - ((d.value - minVal) / range) * (h - 2 * pad),
+  const pts = data.map((d, i) => ({
+    x: padX + (i / (data.length - 1)) * (w - 2 * padX),
+    y: h - padY - ((d.value - minVal) / range) * (h - 2 * padY),
     ...d,
   }));
 
-  const pathD = points
-    .map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`)
-    .join(" ");
+  // Smooth cubic bezier path
+  const smoothPath = pts.map((p, i) => {
+    if (i === 0) return `M ${p.x} ${p.y}`;
+    const prev = pts[i - 1];
+    const cpx = (prev.x + p.x) / 2;
+    return `C ${cpx} ${prev.y}, ${cpx} ${p.y}, ${p.x} ${p.y}`;
+  }).join(" ");
 
-  const areaD = `${pathD} L ${points[points.length - 1].x} ${h} L ${points[0].x} ${h} Z`;
+  const areaPath = `${smoothPath} L ${pts[pts.length - 1].x} ${h} L ${pts[0].x} ${h} Z`;
+  const gradId = `lg-${title.replace(/\s/g, "")}`;
+  const clipId = `clip-${title.replace(/\s/g, "")}`;
 
   return (
     <div ref={ref} className="card-tech p-6">
       <div className="text-sm font-semibold text-slate-400 mb-4 font-mono">{title}</div>
-      <div className="overflow-hidden">
+      <div className="w-full overflow-hidden">
         <svg
           viewBox={`0 0 ${w} ${h}`}
           className="w-full"
-          style={{ height: "100px" }}
+          style={{ height: "120px" }}
+          preserveAspectRatio="none"
         >
           <defs>
-            <linearGradient id={`area-grad-${title}`} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor={color} stopOpacity="0.3" />
+            <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={color} stopOpacity="0.25" />
               <stop offset="100%" stopColor={color} stopOpacity="0" />
             </linearGradient>
-            <clipPath id={`line-clip-${title}`}>
+            <clipPath id={clipId}>
               <rect
-                x="0"
-                y="0"
-                width={animated ? w : 0}
+                x="0" y="0"
+                width={w * progress}
                 height={h}
-                style={{ transition: "width 1.5s cubic-bezier(0.4,0,0.2,1)" }}
+                style={{ transition: "width 1.8s cubic-bezier(0.4,0,0.2,1) 0.1s" }}
               />
             </clipPath>
           </defs>
-          <path
-            d={areaD}
-            fill={`url(#area-grad-${title})`}
-            clipPath={`url(#line-clip-${title})`}
-          />
-          <path
-            d={pathD}
-            fill="none"
-            stroke={color}
-            strokeWidth="2"
-            clipPath={`url(#line-clip-${title})`}
-          />
-          {points.map((p, i) => (
-            <circle
-              key={i}
-              cx={p.x}
-              cy={p.y}
-              r="3"
-              fill={color}
-              clipPath={`url(#line-clip-${title})`}
+
+          {/* Horizontal grid lines */}
+          {[0.25, 0.5, 0.75].map((t) => (
+            <line
+              key={t}
+              x1={padX} y1={padY + t * (h - 2 * padY)}
+              x2={w - padX} y2={padY + t * (h - 2 * padY)}
+              stroke="rgba(255,255,255,0.04)"
+              strokeWidth="1"
             />
           ))}
+
+          {/* Area fill */}
+          <path d={areaPath} fill={`url(#${gradId})`} clipPath={`url(#${clipId})`} />
+
+          {/* Line */}
+          <path
+            d={smoothPath}
+            fill="none"
+            stroke={color}
+            strokeWidth="2.5"
+            clipPath={`url(#${clipId})`}
+          />
+
+          {/* Data points */}
+          {pts.map((p, i) => (
+            <g key={i} clipPath={`url(#${clipId})`}>
+              <circle cx={p.x} cy={p.y} r="5" fill={color} opacity="0.3" />
+              <circle cx={p.x} cy={p.y} r="3" fill={color} />
+            </g>
+          ))}
         </svg>
-        <div className="flex justify-between mt-2">
+
+        {/* X-axis labels */}
+        <div className="flex justify-between mt-1 px-1">
           {data.map((d, i) => (
             <span key={i} className="text-[10px] text-slate-600 font-mono">{d.label}</span>
           ))}
@@ -272,7 +301,7 @@ export default function DataCharts() {
     label,
     value: [1200, 2800, 4500, 6200, 8400, 10800][i],
     maxValue: 12000,
-    color: `linear-gradient(180deg, #00d4ff ${i * 5}%, #7c3aed)`,
+    color: `linear-gradient(180deg, #00d4ff, #7c3aed)`,
   }));
 
   const growthData: LinePoint[] = months.map((label, i) => ({
@@ -285,19 +314,18 @@ export default function DataCharts() {
     { label: t("company.content"), value: 24, color: "#7c3aed" },
     { label: t("company.marketing"), value: 18, color: "#10b981" },
     { label: t("company.game"), value: 14, color: "#f59e0b" },
-    { label: t("nav.features"), value: 12, color: "#ef4444" },
+    { label: t("company.outsourcing"), value: 12, color: "#ef4444" },
   ];
 
   return (
     <section id="data" className="py-20 lg:py-32 relative">
-      {/* Background glow */}
       <div className="absolute inset-0 radial-glow-cyan pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 tag-tech mb-4">
-            <span className="ai-dot" />
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#00d4ff] animate-pulse" />
             {t("chart.badge")}
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-4">
