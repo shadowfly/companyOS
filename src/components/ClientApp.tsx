@@ -291,15 +291,16 @@ function HeroSection() {
 function CompaniesSection() {
   const { t } = useLang();
 
-  const companies = [
-    { icon: "💻", nameKey: "company.software", descKey: "company.software.desc", color: "from-cyan-500/20 to-blue-500/20" },
-    { icon: "🎮", nameKey: "company.game", descKey: "company.game.desc", color: "from-violet-500/20 to-purple-500/20" },
-    { icon: "🌍", nameKey: "company.geo", descKey: "company.geo.desc", color: "from-emerald-500/20 to-teal-500/20" },
-    { icon: "🎬", nameKey: "company.animation", descKey: "company.animation.desc", color: "from-rose-500/20 to-pink-500/20" },
-    { icon: "📱", nameKey: "company.content", descKey: "company.content.desc", color: "from-orange-500/20 to-amber-500/20" },
-    { icon: "📣", nameKey: "company.marketing", descKey: "company.marketing.desc", color: "from-sky-500/20 to-blue-500/20" },
-    { icon: "⚙️", nameKey: "company.outsourcing", descKey: "company.outsourcing.desc", color: "from-slate-500/20 to-gray-500/20" },
-  ];
+   const companies = [
+     { icon: "💻", nameKey: "company.software", descKey: "company.software.desc", color: "from-cyan-500/20 to-blue-500/20" },
+     { icon: "🎮", nameKey: "company.game", descKey: "company.game.desc", color: "from-violet-500/20 to-purple-500/20" },
+     { icon: "🌍", nameKey: "company.geo", descKey: "company.geo.desc", color: "from-emerald-500/20 to-teal-500/20" },
+     { icon: "🎬", nameKey: "company.animation", descKey: "company.animation.desc", color: "from-rose-500/20 to-pink-500/20" },
+     { icon: "📱", nameKey: "company.content", descKey: "company.content.desc", color: "from-orange-500/20 to-amber-500/20" },
+     { icon: "📣", nameKey: "company.marketing", descKey: "company.marketing.desc", color: "from-sky-500/20 to-blue-500/20" },
+     { icon: "⚙️", nameKey: "company.outsourcing", descKey: "company.outsourcing.desc", color: "from-slate-500/20 to-gray-500/20" },
+     { icon: "💼", nameKey: "company.consulting", descKey: "company.consulting.desc", color: "from-indigo-500/20 to-purple-500/20" },
+   ];
 
   return (
     <section id="companies" className="py-20 lg:py-32 relative">

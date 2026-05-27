@@ -35,7 +35,7 @@ const translations: Record<string, Record<Lang, string>> = {
 
   // Companies
   "companies.badge": { zh: "多元化业务", en: "Diverse Business" },
-  "companies.title": { zh: "支持7种AI公司形态", en: "7 AI Company Types" },
+   "companies.title": { zh: "支持多种AI公司形态", en: "Multiple AI Company Types" },
   "companies.desc": { zh: "从软件开发到内容创作，覆盖主流商业场景，一键创建专属AI公司", en: "From software development to content creation, covering all major business scenarios" },
   "company.software": { zh: "软件公司", en: "Software Company" },
   "company.software.desc": { zh: "SaaS / 工具开发", en: "SaaS / Tool Development" },
@@ -49,8 +49,10 @@ const translations: Record<string, Record<Lang, string>> = {
   "company.content.desc": { zh: "短视频 / 自媒体", en: "Short Video / Social Media" },
   "company.marketing": { zh: "营销与广告公司", en: "Marketing & Ad Company" },
   "company.marketing.desc": { zh: "自动化营销投放", en: "Automated Marketing" },
-  "company.outsourcing": { zh: "自动化外包公司", en: "Automation Outsourcing" },
-  "company.outsourcing.desc": { zh: "AI交付业务外包", en: "AI-Delivered Outsourcing" },
+   "company.outsourcing": { zh: "自动化外包公司", en: "Automation Outsourcing" },
+   "company.outsourcing.desc": { zh: "AI交付业务外包", en: "AI-Delivered Outsourcing" },
+   "company.consulting": { zh: "咨询公司", en: "Consulting Company" },
+   "company.consulting.desc": { zh: "AI商务咨询服务", en: "AI Business Consulting" },
 
   // Features
   "features.badge": { zh: "企业级系统", en: "Enterprise-Grade System" },

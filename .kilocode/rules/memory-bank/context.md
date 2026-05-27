@@ -21,13 +21,14 @@ The project is now a fully-featured, tech-aesthetic AI business landing page for
 - [x] `src/components/DataCharts.tsx` — Bar chart, Donut chart, Line chart with IntersectionObserver animations
 - [x] `src/app/page.tsx` — Full landing page with 8 sections:
   1. Hero — Canvas particle field, terminal animation, animated numbers
-  2. Company Types — 7 AI company type cards
+  2. Company Types — 8 AI company type cards
   3. Features — 4 core feature cards with progress bars
   4. Data Charts — KPI cards + 3 interactive charts
   5. Revenue — 3 revenue stream cards
   6. Workforce — AI brain visual + role cards
   7. Pricing — Monthly/yearly toggle, feature list
   8. CTA + Footer
+- [x] Updated company types section: Changed "支持7种AI公司形态" to "支持多种AI公司形态" and added "咨询公司" (Consulting Company) type
 
 ## Current Structure
 

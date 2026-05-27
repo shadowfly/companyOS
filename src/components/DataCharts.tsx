@@ -54,7 +54,7 @@ function BarChart({ data, title }: { data: BarData[]; title: string }) {
                   height: `${heightPx}px`,
                   background: bar.color,
                   transition: `height 1.2s cubic-bezier(0.4,0,0.2,1) ${i * 0.12}s`,
-                  boxShadow: animated ? `0 0 12px ${bar.color.includes("cyan") ? "rgba(0,212,255,0.4)" : "rgba(124,58,237,0.4)"}` : "none",
+                   boxShadow: animated ? (bar.color && typeof bar.color === 'string' ? `0 0 12px ${bar.color.includes("cyan") ? "rgba(0,212,255,0.4)" : "rgba(124,58,237,0.4)"}` : "none") : "none",
                 }}
               />
               <div className="text-[10px] text-slate-500 font-mono">{bar.label}</div>
@@ -309,13 +309,14 @@ export default function DataCharts() {
     value: [12, 18, 25, 34, 42, 58][i],
   }));
 
-  const donutData: DonutData[] = [
-    { label: t("company.software"), value: 32, color: "#00d4ff" },
-    { label: t("company.content"), value: 24, color: "#7c3aed" },
-    { label: t("company.marketing"), value: 18, color: "#10b981" },
-    { label: t("company.game"), value: 14, color: "#f59e0b" },
-    { label: t("company.outsourcing"), value: 12, color: "#ef4444" },
-  ];
+   const donutData: DonutData[] = [
+     { label: t("company.software"), value: 32, color: "#00d4ff" },
+     { label: t("company.content"), value: 24, color: "#7c3aed" },
+     { label: t("company.marketing"), value: 18, color: "#10b981" },
+     { label: t("company.game"), value: 14, color: "#f59e0b" },
+     { label: t("company.outsourcing"), value: 12, color: "#ef4444" },
+     { label: t("company.consulting"), value: 10, color: "#8b5cf6" },
+   ];
 
   return (
     <section id="data" className="py-20 lg:py-32 relative">
@@ -361,7 +362,7 @@ export default function DataCharts() {
             <DonutChart
               data={donutData}
               title={`🥧 ${t("companies.title")}`}
-              centerValue="7"
+               centerValue="8"
               centerLabel={t("companies.badge")}
             />
           </div>
