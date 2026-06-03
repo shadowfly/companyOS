@@ -122,7 +122,7 @@ function HeroSection() {
   const { t } = useLang();
   const [termLines, setTermLines] = useState<string[]>([]);
 
-  const terminalLines = [
+  const terminalLines = useRef([
     "> Initializing AI Company OS...",
     "> Loading enterprise modules... ✓",
     "> Generating org structure... ✓",
@@ -131,20 +131,19 @@ function HeroSection() {
     "> Business Hall: ONLINE",
     "> Revenue engine: ACTIVE",
     "> System status: ALL SYSTEMS GO 🚀",
-  ];
+  ]);
 
   useEffect(() => {
     let i = 0;
     const timer = setInterval(() => {
-      if (i < terminalLines.length) {
-        setTermLines((prev) => [...prev, terminalLines[i]]);
+      if (i < terminalLines.current.length) {
+        setTermLines((prev) => [...prev, terminalLines.current[i]]);
         i++;
       } else {
         clearInterval(timer);
       }
     }, 400);
     return () => clearInterval(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -230,19 +229,22 @@ function HeroSection() {
                 <span className="ml-2 text-xs text-slate-500 font-mono">ai-company-os ~ terminal</span>
               </div>
               <div className="p-5 font-mono text-sm min-h-[240px] space-y-1">
-                {termLines.map((line, i) => (
-                  <div
-                    key={i}
-                    className={`${
-                      line.includes("✓") ? "text-emerald-400" :
-                      line.includes("🚀") ? "text-cyan-400 font-bold" :
-                      line.includes(">") ? "text-slate-300" : "text-cyan-400"
-                    }`}
-                  >
-                    {line}
-                  </div>
-                ))}
-                {termLines.length < terminalLines.length && (
+                {termLines.map((line, i) => {
+                  if (!line) return null;
+                  return (
+                    <div
+                      key={i}
+                      className={`${
+                        line.includes("✓") ? "text-emerald-400" :
+                        line.includes("🚀") ? "text-cyan-400 font-bold" :
+                        line.includes(">") ? "text-slate-300" : "text-cyan-400"
+                      }`}
+                    >
+                      {line}
+                    </div>
+                  );
+                })}
+                {termLines.length < terminalLines.current.length && (
                   <span className="text-cyan-400 animate-blink">█</span>
                 )}
               </div>
