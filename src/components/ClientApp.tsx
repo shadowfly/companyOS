@@ -92,39 +92,28 @@ function AIParticleField() {
   );
 }
 
-// ─── Animated Number ──────────────────────────────────────────────────────────
-function AnimatedNumber({ target, prefix = "", suffix = "" }: {
-  target: number; prefix?: string; suffix?: string;
+// ─── Section Header with Number ───────────────────────────────────────────────
+function SectionHeader({ number, badge, title, desc }: {
+  number: string;
+  badge?: string;
+  title: string;
+  desc?: string;
 }) {
-  const [current, setCurrent] = useState(0);
-  const ref = useRef<HTMLSpanElement>(null);
-  const started = useRef(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !started.current) {
-          started.current = true;
-          const duration = 2000;
-          const steps = 60;
-          let step = 0;
-          const timer = setInterval(() => {
-            step++;
-            setCurrent(Math.floor((step / steps) * target));
-            if (step >= steps) clearInterval(timer);
-          }, duration / steps);
-        }
-      },
-      { threshold: 0.5 }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, [target]);
-
   return (
-    <span ref={ref}>
-      {prefix}{current.toLocaleString()}{suffix}
-    </span>
+    <div className="mb-12">
+      <div className="flex items-center gap-3 mb-4">
+        <span className="section-number">{number}</span>
+        {badge && (
+          <span className="tag-tech">{badge}</span>
+        )}
+      </div>
+      <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-4">
+        {title}
+      </h2>
+      {desc && (
+        <p className="text-slate-400 max-w-2xl text-lg">{desc}</p>
+      )}
+    </div>
   );
 }
 
@@ -160,7 +149,6 @@ function HeroSection() {
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden grid-bg pt-20">
-      {/* Background elements */}
       <div className="absolute inset-0">
         <AIParticleField />
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl" />
@@ -171,7 +159,7 @@ function HeroSection() {
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left: Content */}
           <div>
-            <div className="inline-flex items-center gap-2 tag-tech mb-6">
+            <div className="flex items-center gap-2 tag-tech mb-6">
               <span className="inline-block w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#00d4ff] animate-pulse" />
               {t("hero.badge")}
               <span className="inline-block w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#00d4ff] animate-pulse" />
@@ -226,7 +214,6 @@ function HeroSection() {
 
           {/* Right: Terminal + AI Visual */}
           <div className="relative">
-            {/* Orbit rings */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none hidden lg:block">
               <div className="orbit-ring w-72 h-72 absolute -translate-x-1/2 -translate-y-1/2" />
               <div
@@ -235,16 +222,13 @@ function HeroSection() {
               />
             </div>
 
-            {/* Terminal */}
             <div className="card-tech rounded-2xl overflow-hidden relative z-10">
-              {/* Terminal header */}
               <div className="flex items-center gap-2 px-4 py-3 bg-[rgba(0,212,255,0.05)] border-b border-[rgba(0,212,255,0.1)]">
                 <div className="w-3 h-3 rounded-full bg-red-500" />
                 <div className="w-3 h-3 rounded-full bg-yellow-500" />
                 <div className="w-3 h-3 rounded-full bg-green-500" />
                 <span className="ml-2 text-xs text-slate-500 font-mono">ai-company-os ~ terminal</span>
               </div>
-              {/* Terminal body */}
               <div className="p-5 font-mono text-sm min-h-[240px] space-y-1">
                 {termLines.map((line, i) => (
                   <div
@@ -264,10 +248,9 @@ function HeroSection() {
               </div>
             </div>
 
-            {/* Floating metric cards */}
             <div className="absolute -top-4 -right-4 card-tech p-3 rounded-xl text-center animate-float hidden sm:block">
               <div className="text-2xl font-black text-cyan-400">
-                <AnimatedNumber target={10800} suffix="+" />
+                10,800+
               </div>
               <div className="text-[10px] text-slate-500 font-mono mt-0.5">AI Companies</div>
             </div>
@@ -276,7 +259,7 @@ function HeroSection() {
               style={{ animation: "float 3.5s ease-in-out infinite 1s" }}
             >
               <div className="text-2xl font-black text-emerald-400">
-                <AnimatedNumber target={580} suffix="K+" />
+                580K+
               </div>
               <div className="text-[10px] text-slate-500 font-mono mt-0.5">AI Staff</div>
             </div>
@@ -291,31 +274,27 @@ function HeroSection() {
 function CompaniesSection() {
   const { t } = useLang();
 
-   const companies = [
-     { icon: "💻", nameKey: "company.software", descKey: "company.software.desc", color: "from-cyan-500/20 to-blue-500/20" },
-     { icon: "🎮", nameKey: "company.game", descKey: "company.game.desc", color: "from-violet-500/20 to-purple-500/20" },
-     { icon: "🌍", nameKey: "company.geo", descKey: "company.geo.desc", color: "from-emerald-500/20 to-teal-500/20" },
-     { icon: "🎬", nameKey: "company.animation", descKey: "company.animation.desc", color: "from-rose-500/20 to-pink-500/20" },
-     { icon: "📱", nameKey: "company.content", descKey: "company.content.desc", color: "from-orange-500/20 to-amber-500/20" },
-     { icon: "📣", nameKey: "company.marketing", descKey: "company.marketing.desc", color: "from-sky-500/20 to-blue-500/20" },
-     { icon: "⚙️", nameKey: "company.outsourcing", descKey: "company.outsourcing.desc", color: "from-slate-500/20 to-gray-500/20" },
-     { icon: "💼", nameKey: "company.consulting", descKey: "company.consulting.desc", color: "from-indigo-500/20 to-purple-500/20" },
-   ];
+  const companies = [
+    { icon: "💻", nameKey: "company.software", descKey: "company.software.desc", color: "from-cyan-500/20 to-blue-500/20" },
+    { icon: "🎮", nameKey: "company.game", descKey: "company.game.desc", color: "from-violet-500/20 to-purple-500/20" },
+    { icon: "🌍", nameKey: "company.geo", descKey: "company.geo.desc", color: "from-emerald-500/20 to-teal-500/20" },
+    { icon: "🎬", nameKey: "company.animation", descKey: "company.animation.desc", color: "from-rose-500/20 to-pink-500/20" },
+    { icon: "📱", nameKey: "company.content", descKey: "company.content.desc", color: "from-orange-500/20 to-amber-500/20" },
+    { icon: "📣", nameKey: "company.marketing", descKey: "company.marketing.desc", color: "from-sky-500/20 to-blue-500/20" },
+    { icon: "⚙️", nameKey: "company.outsourcing", descKey: "company.outsourcing.desc", color: "from-slate-500/20 to-gray-500/20" },
+    { icon: "💼", nameKey: "company.consulting", descKey: "company.consulting.desc", color: "from-indigo-500/20 to-purple-500/20" },
+  ];
 
   return (
     <section id="companies" className="py-20 lg:py-32 relative">
       <div className="absolute inset-0 radial-glow-purple pointer-events-none" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 tag-tech mb-4">
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#00d4ff] animate-pulse" />
-            {t("companies.badge")}
-          </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-4">
-            {t("companies.title")}
-          </h2>
-          <p className="text-slate-400 max-w-2xl mx-auto text-lg">{t("companies.desc")}</p>
-        </div>
+        <SectionHeader
+          number="01"
+          badge={t("companies.badge")}
+          title={t("companies.title")}
+          desc={t("companies.desc")}
+        />
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {companies.map((c, i) => (
@@ -389,7 +368,6 @@ function FeatureCard({
         {t(feat.descKey)}
       </p>
 
-      {/* Progress bars — animated on scroll into view */}
       <div className="space-y-3 mb-5">
         {feat.metrics.map((m, j) => (
           <div key={j}>
@@ -412,7 +390,6 @@ function FeatureCard({
         ))}
       </div>
 
-      {/* Tags */}
       <div className="flex flex-wrap gap-2">
         {feat.tags.map((tagKey) => (
           <span key={tagKey} className="tag-tech text-xs">
@@ -490,16 +467,12 @@ function FeaturesSection() {
     <section id="features" className="py-20 lg:py-32 relative">
       <div className="absolute inset-0 radial-glow-cyan pointer-events-none" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 tag-tech mb-4">
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#00d4ff] animate-pulse" />
-            {t("features.badge")}
-          </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-4">
-            {t("features.title")}
-          </h2>
-          <p className="text-slate-400 max-w-2xl mx-auto text-lg">{t("features.desc")}</p>
-        </div>
+        <SectionHeader
+          number="02"
+          badge={t("features.badge")}
+          title={t("features.title")}
+          desc={t("features.desc")}
+        />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {features.map((feat, i) => (
@@ -545,21 +518,16 @@ function RevenueSection() {
   return (
     <section className="py-20 lg:py-32 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 tag-tech mb-4">
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#00d4ff] animate-pulse" />
-            {t("revenue.badge")}
-          </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-4">
-            {t("revenue.title")}
-          </h2>
-          <p className="text-slate-400 max-w-2xl mx-auto text-lg">{t("revenue.desc")}</p>
-        </div>
+        <SectionHeader
+          number="03"
+          badge={t("revenue.badge")}
+          title={t("revenue.title")}
+          desc={t("revenue.desc")}
+        />
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {revenues.map((rev, i) => (
             <div key={i} className="card-tech p-8 relative overflow-hidden group">
-              {/* Number bg */}
               <div className="absolute top-4 right-4 text-6xl font-black text-white/3 font-mono select-none">
                 {rev.num}
               </div>
@@ -570,13 +538,11 @@ function RevenueSection() {
               <h3 className="text-xl font-bold text-white mb-3">{t(rev.titleKey)}</h3>
               <p className="text-slate-400 text-sm leading-relaxed">{t(rev.descKey)}</p>
 
-              {/* Hover shimmer */}
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-shimmer" />
             </div>
           ))}
         </div>
 
-        {/* 24/7 Banner */}
         <div className="mt-10 card-tech p-6 sm:p-8 text-center relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 via-violet-500/5 to-emerald-500/5" />
           <div className="relative">
@@ -607,32 +573,25 @@ function WorkforceSection() {
     <section className="py-20 lg:py-32 relative overflow-hidden">
       <div className="absolute inset-0 radial-glow-purple pointer-events-none" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 tag-tech mb-4">
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#00d4ff] animate-pulse" />
-            {t("workforce.badge")}
-          </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-4">
-            {t("workforce.title")}
-          </h2>
-          <p className="text-slate-400 max-w-2xl mx-auto text-lg">{t("workforce.desc")}</p>
-        </div>
+        <SectionHeader
+          number="04"
+          badge={t("workforce.badge")}
+          title={t("workforce.title")}
+          desc={t("workforce.desc")}
+        />
 
         {/* Central AI Brain visual */}
         <div className="relative flex justify-center mb-16">
           <div className="relative w-48 h-48 sm:w-64 sm:h-64">
-            {/* Central circle */}
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-cyan-400/20 to-violet-600/20 border border-cyan-400/30 flex flex-col items-center justify-center backdrop-blur-xl">
                 <div className="text-3xl">🤖</div>
                 <div className="text-xs text-cyan-400 font-mono mt-1">AI Brain</div>
               </div>
             </div>
-            {/* Rotating rings */}
             <div className="absolute inset-0 orbit-ring" />
             <div className="absolute inset-4 orbit-ring" style={{ animationDirection: "reverse", animationDuration: "10s" }} />
 
-            {/* Role badges around */}
             {roles.map((role, i) => {
               const angle = (i / roles.length) * 360 - 90;
               const rad = (angle * Math.PI) / 180;
@@ -652,7 +611,6 @@ function WorkforceSection() {
           </div>
         </div>
 
-        {/* Role Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
           {roles.map((role, i) => (
             <div key={i} className="card-tech p-5 text-center group hover:scale-105 transition-transform">
@@ -686,41 +644,34 @@ function PricingSection() {
     <section id="pricing" className="py-20 lg:py-32 relative">
       <div className="absolute inset-0 grid-bg pointer-events-none opacity-50" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 tag-tech mb-4">
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#00d4ff] animate-pulse" />
-            {t("pricing.badge")}
-          </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-4">
-            {t("pricing.title")}
-          </h2>
+        <SectionHeader
+          number="05"
+          badge={t("pricing.badge")}
+          title={t("pricing.title")}
+        />
 
-          {/* Toggle */}
-          <div className="flex items-center justify-center gap-4 mt-6">
-            <span className={`text-sm font-medium ${!yearly ? "text-white" : "text-slate-500"}`}>
-              {t("pricing.monthly")}
+        <div className="flex items-center justify-center gap-4 mb-12">
+          <span className={`text-sm font-medium ${!yearly ? "text-white" : "text-slate-500"}`}>
+            {t("pricing.monthly")}
+          </span>
+          <button
+            onClick={() => setYearly(!yearly)}
+            className={`relative w-14 h-7 rounded-full transition-colors ${yearly ? "bg-cyan-400" : "bg-slate-700"}`}
+          >
+            <div className={`absolute top-1 w-5 h-5 rounded-full bg-white transition-transform ${yearly ? "translate-x-8" : "translate-x-1"}`} />
+          </button>
+          <span className={`text-sm font-medium ${yearly ? "text-white" : "text-slate-500"}`}>
+            {t("pricing.yearly")}
+          </span>
+          {yearly && (
+            <span className="text-xs bg-emerald-400/20 text-emerald-400 border border-emerald-400/30 px-2 py-0.5 rounded-full">
+              {t("pricing.save")}
             </span>
-            <button
-              onClick={() => setYearly(!yearly)}
-              className={`relative w-14 h-7 rounded-full transition-colors ${yearly ? "bg-cyan-400" : "bg-slate-700"}`}
-            >
-              <div className={`absolute top-1 w-5 h-5 rounded-full bg-white transition-transform ${yearly ? "translate-x-8" : "translate-x-1"}`} />
-            </button>
-            <span className={`text-sm font-medium ${yearly ? "text-white" : "text-slate-500"}`}>
-              {t("pricing.yearly")}
-            </span>
-            {yearly && (
-              <span className="text-xs bg-emerald-400/20 text-emerald-400 border border-emerald-400/30 px-2 py-0.5 rounded-full">
-                {t("pricing.save")}
-              </span>
-            )}
-          </div>
+          )}
         </div>
 
         <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Main plan */}
           <div className="md:col-span-2 card-tech p-8 relative overflow-hidden border-cyan-400/30">
-            {/* Glow effect */}
             <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-violet-500/5" />
             <div className="relative">
               <div className="flex items-end gap-2 mb-2">
@@ -757,7 +708,6 @@ function PricingSection() {
             </div>
           </div>
 
-          {/* Custom plan */}
           <div className="card-tech p-8 flex flex-col justify-between">
             <div>
               <div className="text-3xl mb-4">🏢</div>
@@ -786,7 +736,6 @@ function CTASection() {
       <div className="absolute inset-0 bg-gradient-to-br from-cyan-900/10 via-violet-900/10 to-emerald-900/10" />
       <div className="absolute inset-0 grid-bg opacity-30 pointer-events-none" />
 
-      {/* Large decorative text */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <div className="text-[20vw] font-black text-white/[0.02] select-none tracking-tighter leading-none">
           CEO
@@ -840,7 +789,6 @@ function Footer() {
     <footer className="border-t border-[rgba(0,212,255,0.08)] py-12 sm:py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-          {/* Brand */}
           <div className="col-span-2 lg:col-span-1">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-400 to-violet-600 flex items-center justify-center">
@@ -854,7 +802,6 @@ function Footer() {
             <p className="text-slate-500 text-sm leading-relaxed">{t("footer.tagline")}</p>
           </div>
 
-          {/* Product */}
           <div>
             <div className="text-white font-semibold mb-4">{t("footer.product")}</div>
             <div className="space-y-3">
@@ -864,7 +811,6 @@ function Footer() {
             </div>
           </div>
 
-          {/* Company */}
           <div>
             <div className="text-white font-semibold mb-4">{t("footer.company")}</div>
             <div className="space-y-3">
@@ -873,7 +819,6 @@ function Footer() {
             </div>
           </div>
 
-          {/* Status */}
           <div>
             <div className="text-white font-semibold mb-4">System Status</div>
             <div className="space-y-3">
@@ -892,7 +837,6 @@ function Footer() {
           </div>
         </div>
 
-        {/* Bottom */}
         <div className="section-divider mb-8" />
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-slate-600 text-sm font-mono">

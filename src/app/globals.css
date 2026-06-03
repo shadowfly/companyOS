@@ -27,7 +27,6 @@ body {
   overflow-x: hidden;
 }
 
-/* Grid background */
 .grid-bg {
   background-image:
     linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
@@ -35,7 +34,6 @@ body {
   background-size: 60px 60px;
 }
 
-/* Glowing border */
 .glow-border {
   border: 1px solid var(--color-border);
   box-shadow: 0 0 20px rgba(0, 212, 255, 0.05), inset 0 0 20px rgba(0, 212, 255, 0.02);
@@ -47,12 +45,10 @@ body {
   transition: all 0.3s ease;
 }
 
-/* Cyan glow text */
 .text-glow-cyan {
   text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
 }
 
-/* Gradient text */
 .gradient-text {
   background: linear-gradient(135deg, #00d4ff 0%, #7c3aed 50%, #10b981 100%);
   -webkit-background-clip: text;
@@ -67,7 +63,6 @@ body {
   background-clip: text;
 }
 
-/* Neon button */
 .btn-neon {
   background: linear-gradient(135deg, #00d4ff, #7c3aed);
   border: none;
@@ -113,7 +108,6 @@ body {
   box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
 }
 
-/* Pulse animation */
 @keyframes pulse-cyan {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
@@ -183,7 +177,6 @@ body {
   animation: shimmer 2s infinite;
 }
 
-/* Card styles */
 .card-tech {
   background: rgba(10, 15, 30, 0.7);
   backdrop-filter: blur(20px);
@@ -198,7 +191,6 @@ body {
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 0 0 40px rgba(0, 212, 255, 0.08);
 }
 
-/* AI Particle dots */
 .ai-dot {
   width: 6px;
   height: 6px;
@@ -208,20 +200,17 @@ body {
   animation: pulse-cyan 2s ease-in-out infinite;
 }
 
-/* Section divider */
 .section-divider {
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.3), transparent);
 }
 
-/* Chart bar */
 .chart-bar {
   background: linear-gradient(180deg, #00d4ff, #7c3aed);
   border-radius: 4px 4px 0 0;
   transition: height 1s ease;
 }
 
-/* Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -239,7 +228,6 @@ body {
   background: rgba(0, 212, 255, 0.5);
 }
 
-/* Radial gradient overlays */
 .radial-glow-cyan {
   background: radial-gradient(ellipse at center, rgba(0, 212, 255, 0.08) 0%, transparent 70%);
 }
@@ -248,7 +236,6 @@ body {
   background: radial-gradient(ellipse at center, rgba(124, 58, 237, 0.08) 0%, transparent 70%);
 }
 
-/* Tag */
 .tag-tech {
   background: rgba(0, 212, 255, 0.1);
   border: 1px solid rgba(0, 212, 255, 0.2);
@@ -260,7 +247,6 @@ body {
   padding: 4px 12px;
 }
 
-/* Navigation active */
 .nav-link {
   color: #94a3b8;
   transition: color 0.2s;
@@ -286,7 +272,6 @@ body {
   width: 100%;
 }
 
-/* Progress bar */
 .progress-bar {
   height: 6px;
   background: rgba(0, 212, 255, 0.15);
@@ -301,9 +286,17 @@ body {
   transition: width 1.5s ease;
 }
 
-/* Orbit ring */
 .orbit-ring {
   border: 1px dashed rgba(0, 212, 255, 0.2);
   border-radius: 50%;
   animation: rotate-slow 15s linear infinite;
+}
+
+/* Section number style */
+.section-number {
+  font-family: monospace;
+  font-size: 0.75rem;
+  color: rgba(0, 212, 255, 0.5);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }

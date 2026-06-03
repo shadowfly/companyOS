@@ -12,8 +12,9 @@ interface LangContextType {
 
 const translations: Record<string, Record<Lang, string>> = {
   // Nav
-  "nav.features": { zh: "功能特性", en: "Features" },
-  "nav.companies": { zh: "公司类型", en: "Company Types" },
+  "nav.scenarios": { zh: "场景", en: "Scenarios" },
+  "nav.services": { zh: "合作方式", en: "Services" },
+  "nav.audiences": { zh: "目标用户", en: "Audiences" },
   "nav.pricing": { zh: "定价", en: "Pricing" },
   "nav.demo": { zh: "查看演示", en: "View Demo" },
   "nav.start": { zh: "立即开始", en: "Get Started" },

@@ -15,8 +15,9 @@ export default function Navbar() {
   }, []);
 
   const navItems = [
-    { key: "nav.features", href: "#features" },
-    { key: "nav.companies", href: "#companies" },
+    { key: "nav.scenarios", href: "#companies" },
+    { key: "nav.services", href: "#features" },
+    { key: "nav.audiences", href: "#workforce" },
     { key: "nav.pricing", href: "#pricing" },
   ];
 
